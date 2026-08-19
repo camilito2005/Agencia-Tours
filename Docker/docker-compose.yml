@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tours_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tours_user
+      POSTGRES_PASSWORD: tours_pass
+      POSTGRES_DB: tours_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Estos .sql se ejecutan SOLO la primera vez que se crea el volumen
+      - ../backend/src/db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tours_user -d tours_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ../backend
+    container_name: tours_backend
+    restart: unless-stopped
+    env_file:
+      - ../backend/.env
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build: ../frontend
+    container_name: tours_frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    command: sh -c "npm run dev -- --host 0.0.0.0"
+
+volumes:
+  postgres_data:
