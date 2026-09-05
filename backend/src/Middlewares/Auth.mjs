@@ -4,6 +4,7 @@ export function VerificarToken(req, res, next) {
   const token = req.cookies?.token_acceso;
   const enviarJson = req.body?.enviarJson;
 
+
   if (!token) {
     return res.status(401).json({
       autenticado: false,
