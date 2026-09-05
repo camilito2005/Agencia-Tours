@@ -1,13 +1,11 @@
-version: "3.9"
-
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: tours_postgres
+    container_name: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: tours_user
-      POSTGRES_PASSWORD: tours_pass
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tours_db
     ports:
       - "5432:5432"
@@ -16,14 +14,14 @@ services:
       # Estos .sql se ejecutan SOLO la primera vez que se crea el volumen
       - ../backend/src/db/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tours_user -d tours_db"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tours_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   backend:
     build: ../backend
-    container_name: tours_backend
+    container_name: backend
     restart: unless-stopped
     env_file:
       - ../backend/.env
@@ -41,7 +39,7 @@ services:
 
   frontend:
     build: ../frontend
-    container_name: tours_frontend
+    container_name: frontend
     restart: unless-stopped
     environment:
       VITE_API_URL: http://localhost:3000/api
@@ -54,5 +52,21 @@ services:
       - /app/node_modules
     command: sh -c "npm run dev -- --host 0.0.0.0"
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@rutasdelmundo.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 volumes:
   postgres_data:
+  pgadmin_data:
