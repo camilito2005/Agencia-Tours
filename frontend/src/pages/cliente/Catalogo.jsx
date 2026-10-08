@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Hotel, Calendar, UtensilsCrossed, MapPin, Search } from "lucide-react";
+import { Hotel, Calendar, UtensilsCrossed, MapPin } from "lucide-react";
 import api from "../../api/axios";
 import NavBar from "../../components/NavBar";
-import { COLORS, money } from "../../styles/theme";
+import { money } from "../../styles/theme";
 
 export default function Catalogo() {
   const [tours, setTours] = useState([]);
@@ -14,10 +14,6 @@ export default function Catalogo() {
   const [orden, setOrden] = useState("recientes");
 
   useEffect(() => {
-    // GET /api/tours (pendiente de construir en el backend) debe devolver
-    // cada tour con su destino y hotel ya incluidos (join), así:
-    // { id_tour, nombre_tour, precio, moneda, duracion, alimentacion,
-    //   imagen_url, cupos, destino: { pais, ciudad }, hotel: { nombre } }
     api
       .get("/tours")
       .then((res) => setTours(res.data))
@@ -39,23 +35,20 @@ export default function Catalogo() {
   }, [tours, filtroPais, orden]);
 
   return (
-    <div style={{ minHeight: "100vh", background: COLORS.bg, fontFamily: "sans-serif" }}>
+    <div className="page">
       <NavBar />
-      <div style={{ maxWidth: 1040, margin: "0 auto", padding: "28px 24px 60px" }}>
-        <h1 style={{ color: COLORS.navy, fontSize: 24, marginBottom: 4 }}>Paquetes disponibles</h1>
-        <p style={{ color: COLORS.sub, fontSize: 14, marginBottom: 20 }}>
+      <div className="container">
+        <h1 className="title-page">Paquetes disponibles</h1>
+        <p className="subtitle">
           {cargando ? "Cargando..." : `${toursFiltrados.length} de ${tours.length} tours`}
         </p>
 
-        {/* Filtros básicos: país, orden por precio/duración */}
-        <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
-          <select value={filtroPais} onChange={(e) => setFiltroPais(e.target.value)}
-            style={{ padding: "9px 12px", borderRadius: 6, border: `1px solid ${COLORS.line}`, background: "#fff", fontSize: 13 }}>
+        <div className="flex flex-gap-2 flex-wrap mb-3">
+          <select className="filter-select" value={filtroPais} onChange={(e) => setFiltroPais(e.target.value)}>
             <option value="">Todos los países</option>
             {paises.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
-          <select value={orden} onChange={(e) => setOrden(e.target.value)}
-            style={{ padding: "9px 12px", borderRadius: 6, border: `1px solid ${COLORS.line}`, background: "#fff", fontSize: 13 }}>
+          <select className="filter-select" value={orden} onChange={(e) => setOrden(e.target.value)}>
             <option value="recientes">Más recientes</option>
             <option value="precio_asc">Precio: menor a mayor</option>
             <option value="precio_desc">Precio: mayor a menor</option>
@@ -63,17 +56,12 @@ export default function Catalogo() {
           </select>
         </div>
 
-        {errorMsg && (
-          <p style={{ color: COLORS.sub, fontSize: 13, background: "#fff", border: `1px dashed ${COLORS.line}`, padding: 14, borderRadius: 8 }}>
-            {errorMsg}
-          </p>
-        )}
-
+        {errorMsg && <p className="notice-box">{errorMsg}</p>}
         {!cargando && !errorMsg && toursFiltrados.length === 0 && (
-          <p style={{ color: COLORS.sub, fontSize: 14 }}>No hay tours que coincidan con ese filtro.</p>
+          <p className="text-sub">No hay tours que coincidan con ese filtro.</p>
         )}
 
-        <div style={{ display: "grid", gap: 14 }}>
+        <div className="tour-list">
           {toursFiltrados.map((t) => <TourCard key={t.id_tour} tour={t} />)}
         </div>
       </div>
@@ -83,30 +71,22 @@ export default function Catalogo() {
 
 function TourCard({ tour }) {
   return (
-    <Link to={`/tours/${tour.id_tour}`} style={{ textDecoration: "none", color: "inherit" }}>
-      <div style={{ display: "flex", background: COLORS.paper, border: `1px solid ${COLORS.line}`, borderRadius: 10, overflow: "hidden", transition: "border-color .15s" }}>
-        <div style={{ flex: 1, padding: "16px 18px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: COLORS.sub, marginBottom: 4 }}>
-            <MapPin size={12} /> {tour.destino?.ciudad}, {tour.destino?.pais}
-          </div>
-          <div style={{ fontSize: 19, fontWeight: 700, color: COLORS.navy }}>{tour.nombre_tour}</div>
-          <div style={{ display: "flex", gap: 16, fontSize: 12, marginTop: 10, color: COLORS.ink, flexWrap: "wrap" }}>
-            {tour.hotel?.nombre && (
-              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Hotel size={13} /> {tour.hotel.nombre}</span>
-            )}
-            <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Calendar size={13} /> {tour.duracion} noches</span>
-            {tour.alimentacion && (
-              <span style={{ display: "flex", alignItems: "center", gap: 4 }}><UtensilsCrossed size={13} /> {tour.alimentacion}</span>
-            )}
-          </div>
+    <Link to={`/tours/${tour.id_tour}`} className="tour-card">
+      <div className="tour-card-info">
+        <div className="tour-card-location"><MapPin size={12} /> {tour.destino?.ciudad}, {tour.destino?.pais}</div>
+        <div className="tour-card-name">{tour.nombre_tour}</div>
+        <div className="tour-card-meta">
+          {tour.hotel?.nombre && <span className="tour-card-meta-item"><Hotel size={13} /> {tour.hotel.nombre}</span>}
+          <span className="tour-card-meta-item"><Calendar size={13} /> {tour.duracion} noches</span>
+          {tour.alimentacion && <span className="tour-card-meta-item"><UtensilsCrossed size={13} /> {tour.alimentacion}</span>}
         </div>
-        <div style={{ width: 150, background: COLORS.navy, color: "#fff", padding: 16, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ fontSize: 10, color: "#AEB9CF" }}>Desde</div>
-            <div style={{ fontSize: 17, fontWeight: 600, color: COLORS.gold }}>{money(tour.precio)}</div>
-          </div>
-          <div style={{ fontSize: 11, color: "#AEB9CF" }}>{tour.cupos} cupos</div>
+      </div>
+      <div className="tour-card-price">
+        <div>
+          <div className="tour-card-price-label">Desde</div>
+          <div className="tour-card-price-value">{money(tour.precio)}</div>
         </div>
+        <div className="tour-card-cupos">{tour.cupos} cupos</div>
       </div>
     </Link>
   );
