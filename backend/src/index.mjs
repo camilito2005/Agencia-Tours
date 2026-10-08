@@ -8,6 +8,11 @@ import pool from "./Config/db.mjs";
 
 // Iremos descomentando esto a medida que creemos cada archivo de rutas:
 import UsuariosRoutes from "./Rutas/Usuarios.Rutas.mjs";
+import HotelesRoutes from "./Rutas/Hoteles.rutas.mjs";
+import ToursRoutes from "./Rutas/Tours.rutas.mjs";
+import DestinosRoutes from "./Rutas/Destinos.Rutas.mjs";
+import UploadsRoutes from "./Rutas/uploads.Rutas.mjs";
+
 // import ToursRoutes from "./Rutas/Tours.rutas.mjs";
 // import ReservasRoutes from "./Rutas/Reservas.rutas.mjs";
 // import NotificacionesRoutes from "./Rutas/Notificaciones.rutas.mjs";
@@ -40,7 +45,11 @@ app.get("/api/health/db", async (req, res) => {
 });
 
 app.use("/api/usuarios", UsuariosRoutes);
-// app.use("/api/tours", ToursRoutes);
+app.use("/api/hoteles", HotelesRoutes);
+app.use("/api/tours", ToursRoutes);
+app.use("/api/destinos", DestinosRoutes);
+app.use("/api/uploads", UploadsRoutes);
+
 // app.use("/api/reservas", ReservasRoutes);
 // app.use("/api/notificaciones", NotificacionesRoutes);
 
