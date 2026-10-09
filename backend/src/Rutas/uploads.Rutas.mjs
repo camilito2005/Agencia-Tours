@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { upload } from "../Middlewares/upload.mjs";
+import { upload } from "../Middlewares/uploads.mjs";
 import { VerificarToken } from "../Middlewares/Auth.mjs";
 
 const router = Router();
