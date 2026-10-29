@@ -16,6 +16,7 @@ import CrearTour from "./pages/operador/CrearTour";
 import Resumen from "./pages/admin/Resumen";
 import Destinos from "./pages/admin/Destinos";
 import Hoteles from "./pages/admin/Hoteles";
+import Usuarios from "./pages/admin/Usuarios";
 
 export default function App() {
   return (
@@ -48,6 +49,9 @@ export default function App() {
           } />
           <Route path="/admin/hoteles" element={
             <ProtectedRoute roles={["administrador"]}><Hoteles /></ProtectedRoute>
+          } />
+          <Route path="/admin/usuarios" element={
+            <ProtectedRoute roles={["administrador"]}><Usuarios /></ProtectedRoute>
           } />
         </Routes>
       </AuthProvider>
