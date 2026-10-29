@@ -1,4 +1,3 @@
-// Paleta oficial de marca R&G Travel (tomada del logo)
 export const COLORS = {
   bg: "#F5F6F8",
   paper: "#FFFFFF",
@@ -26,4 +25,14 @@ export function money(n) {
 
 export function waLink(phone, text) {
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+}
+
+// El backend guarda imagen_url como ruta relativa ("/uploads/destinos/xxx.jpg").
+// Esto le antepone el origen del backend (sin el /api) para poder mostrarla
+// en un <img src="...">.
+export function imagenUrl(ruta) {
+  if (!ruta) return null;
+  if (ruta.startsWith("http")) return ruta;
+  const base = (import.meta.env.VITE_API_URL || "http://localhost:3000/api").replace(/\/api\/?$/, "");
+  return `${base}${ruta}`;
 }
