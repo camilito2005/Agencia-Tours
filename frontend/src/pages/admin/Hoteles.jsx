@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, Hotel as HotelIcon } from "lucide-react";
 import NavBar from "../../components/NavBar";
+import ImageUploadField from "../../components/ImageUploadField";
 import hotelesService from "../../api/hotelesService";
-import { COLORS } from "../../styles/theme";
+import { COLORS, imagenUrl } from "../../styles/theme";
 
 const formVacio = { nombre: "", pais: "", ciudad: "", categoria: "", descripcion: "", servicios: "", imagen_url: "" };
 
@@ -63,7 +64,11 @@ export default function Hoteles() {
             <div style={{ display: "grid", gap: 10 }}>
               {hoteles.map((h) => (
                 <div key={h.id_hotel} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 8, padding: "14px 16px", display: "flex", alignItems: "center", gap: 10 }}>
-                  <HotelIcon size={16} color={COLORS.gold} />
+                  {h.imagen_url ? (
+                    <img src={imagenUrl(h.imagen_url)} alt={h.nombre} style={{ width: 44, height: 44, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                  ) : (
+                    <HotelIcon size={16} color={COLORS.gold} />
+                  )}
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 14 }}>{h.nombre} {h.categoria && `· ${h.categoria}`}</div>
                     <div style={{ fontSize: 12, color: COLORS.sub }}>{h.ciudad}, {h.pais}</div>
@@ -101,8 +106,14 @@ export default function Hoteles() {
             <label style={{ fontSize: 12, color: COLORS.sub, display: "block", marginTop: 10 }}>Servicios</label>
             <input style={campo} value={form.servicios} onChange={set("servicios")} placeholder="Piscina, wifi, desayuno..." />
 
-            <label style={{ fontSize: 12, color: COLORS.sub, display: "block", marginTop: 10 }}>URL de imagen</label>
-            <input style={campo} value={form.imagen_url} onChange={set("imagen_url")} placeholder="https://..." />
+            <div style={{ marginTop: 10 }}>
+              <ImageUploadField
+                value={form.imagen_url}
+                onChange={(url) => setForm((f) => ({ ...f, imagen_url: url }))}
+                entidad="hoteles"
+                label="Imagen del hotel"
+              />
+            </div>
 
             {errorMsg && <p style={{ color: "#B91C1C", fontSize: 12, marginTop: 10 }}>{errorMsg}</p>}
 
