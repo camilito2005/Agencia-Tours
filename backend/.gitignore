@@ -1,2 +1,4 @@
 node_modules/
 .env
+# ignoro las imagenes de los destinos y los hoteles para no tener problemas con ello mas adelante 
+uploads/
