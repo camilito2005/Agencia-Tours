@@ -50,7 +50,7 @@ export default function Login() {
           {error && <p style={{ color: "#B91C1C", fontSize: 13, marginBottom: 12 }}>{error}</p>}
 
           <button type="submit" disabled={cargando}
-            style={{ width: "100%", padding: 12, background: COLORS.coral, color: "#fff", border: "none", borderRadius: 6, fontWeight: 600, cursor: "pointer" }}>
+            style={{ width: "100%", padding: 12, background: COLORS.coral, color: "#0a0a0a", border: "none", borderRadius: 6, fontWeight: 600, cursor: "pointer" }}>
             {cargando ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
