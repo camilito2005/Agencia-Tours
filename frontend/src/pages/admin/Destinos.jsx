@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, MapPin } from "lucide-react";
 import NavBar from "../../components/NavBar";
+import ImageUploadField from "../../components/ImageUploadField";
 import destinosService from "../../api/destinosService";
-import { COLORS } from "../../styles/theme";
+import { COLORS, imagenUrl } from "../../styles/theme";
 
 const formVacio = { pais: "", ciudad: "", descripcion: "", imagen_url: "" };
 
@@ -63,7 +64,11 @@ export default function Destinos() {
             <div style={{ display: "grid", gap: 10 }}>
               {destinos.map((d) => (
                 <div key={d.id_destino} style={{ background: "#fff", border: `1px solid ${COLORS.line}`, borderRadius: 8, padding: "14px 16px", display: "flex", alignItems: "center", gap: 10 }}>
-                  <MapPin size={16} color={COLORS.gold} />
+                  {d.imagen_url ? (
+                    <img src={imagenUrl(d.imagen_url)} alt={d.ciudad} style={{ width: 44, height: 44, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                  ) : (
+                    <MapPin size={16} color={COLORS.gold} />
+                  )}
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 14 }}>{d.ciudad}, {d.pais}</div>
                     {d.descripcion && <div style={{ fontSize: 12, color: COLORS.sub }}>{d.descripcion}</div>}
@@ -75,10 +80,7 @@ export default function Destinos() {
           </div>
 
           {/* Formulario */}
-          {/* <form onSubmit={crear}  style={{ background: COLORS.paper, border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: 18, position: "sticky", top: 20 }}>
-           el mismo formulario pero con multi para enviar archivos*/}
-           <form onSubmit={crear} style={{ background: COLORS.paper, border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: 18, position: "sticky", top: 20 }} encType="multipart/form-data">
-           
+          <form onSubmit={crear} style={{ background: COLORS.paper, border: `1px solid ${COLORS.line}`, borderRadius: 10, padding: 18, position: "sticky", top: 20 }}>
             <h3 style={{ fontSize: 15, marginBottom: 12, color: COLORS.navy }}>Nuevo destino</h3>
 
             <label style={{ fontSize: 12, color: COLORS.sub }}>País *</label>
@@ -90,21 +92,14 @@ export default function Destinos() {
             <label style={{ fontSize: 12, color: COLORS.sub, display: "block", marginTop: 10 }}>Descripción</label>
             <textarea style={{ ...campo, minHeight: 60 }} value={form.descripcion} onChange={set("descripcion")} />
 
-            <label style={{ fontSize: 12, color: COLORS.sub, display: "block", marginTop: 10 }}>URL de imagen</label>
-            {/* <input style={campo} value={form.imagen_url} onChange={set("imagen_url")} placeholder="https://..." />
-            input tipo file para cargar la imagen al backend */}
-            <input type="file" style={{ marginTop: 4 }} onChange={async (e) => {
-              const archivo = e.target.files[0];
-              if (!archivo) return;
-              setErrorMsg("");
-              try {
-                const { data } = await uploadService.subirImagen(archivo);
-                setForm({ ...form, imagen_url: data.url });
-              } catch (err) {
-                setErrorMsg(err.response?.data?.modal?.message || "No se pudo subir la imagen.");
-              }
-            }} />
-            {form.imagen_url && <img src={form.imagen_url} alt="Preview" style={{ marginTop: 10, maxWidth: "100%", borderRadius: 6 }} />}
+            <div style={{ marginTop: 10 }}>
+              <ImageUploadField
+                value={form.imagen_url}
+                onChange={(url) => setForm((f) => ({ ...f, imagen_url: url }))}
+                entidad="destinos"
+                label="Imagen del destino"
+              />
+            </div>
 
             {errorMsg && <p style={{ color: "#B91C1C", fontSize: 12, marginTop: 10 }}>{errorMsg}</p>}
 
