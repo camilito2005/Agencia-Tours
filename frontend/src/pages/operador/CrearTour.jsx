@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import NavBar from "../../components/NavBar";
+import ImageUploadField from "../../components/ImageUploadField";
 import destinosService from "../../api/destinosService";
 import hotelesService from "../../api/hotelesService";
 import toursService from "../../api/toursService";
@@ -11,6 +12,7 @@ const formVacio = {
   nombre_tour: "", id_destino: "", id_hotel: "", descripcion: "", precio: "",
   duracion: 5, cupos: 10, alimentacion: "Desayuno incluido", transporte: "",
   fecha_salida: "", fecha_regreso: "", incluye: "", no_incluye: "", itinerario: "",
+  imagen_url: "",
 };
 
 export default function CrearTour() {
@@ -86,7 +88,16 @@ export default function CrearTour() {
           <label style={label}>Descripción</label>
           <textarea style={{ ...campo, minHeight: 60 }} value={form.descripcion} onChange={set("descripcion")} />
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+          <div style={{ marginTop: 10 }}>
+            <ImageUploadField
+              value={form.imagen_url}
+              onChange={(url) => setForm((f) => ({ ...f, imagen_url: url }))}
+              entidad="tours"
+              label="Imagen del tour"
+            />
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginTop: 10 }}>
             <div>
               <label style={label}>Precio (COP) *</label>
               <input type="number" style={campo} value={form.precio} onChange={set("precio")} required />
